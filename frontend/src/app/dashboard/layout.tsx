@@ -31,11 +31,11 @@ export default async function DashboardLayout({
     "Researcher";
 
   return (
-    <div className="min-h-screen bg-[#f7f8fc] text-slate-900 md:flex">
-      <aside className="flex w-full flex-col border-b border-slate-200 bg-white md:min-h-screen md:w-64 md:border-b-0 md:border-r">
+    <div className="min-h-screen bg-[#f4f7fb] text-slate-900 md:flex">
+      <aside className="flex w-full flex-col border-b border-slate-200/80 bg-white md:min-h-screen md:w-72 md:border-b-0 md:border-r">
         <Link
           href="/dashboard"
-          className="flex items-center gap-3 border-b border-slate-100 px-6 py-6"
+          className="flex items-center gap-3 border-b border-slate-100 px-5 py-5 sm:px-6 sm:py-6"
         >
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-lg font-bold text-white">
             R
@@ -50,20 +50,20 @@ export default async function DashboardLayout({
           </span>
         </Link>
 
-        <div className="px-4 py-5">
+        <div className="px-3 py-4 sm:px-4 sm:py-5">
           <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
             Workspace
           </p>
 
-          <nav className="flex gap-2 overflow-x-auto md:flex-col">
+          <nav className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap md:flex-col">
             {navigation.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex shrink-0 items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-indigo-50 hover:text-indigo-700"
+                className="flex min-w-0 items-center gap-2 rounded-xl px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-indigo-50 hover:text-indigo-700 sm:gap-3"
               >
-                <span className="text-lg">{item.icon}</span>
-                {item.label}
+                <span className="shrink-0 text-lg leading-none">{item.icon}</span>
+                <span className="truncate">{item.label}</span>
               </Link>
             ))}
           </nav>
@@ -81,23 +81,25 @@ export default async function DashboardLayout({
       </aside>
 
       <div className="min-w-0 flex-1">
-        <header className="flex items-center justify-between border-b border-slate-200 bg-white px-5 py-4 md:px-8">
+        <header className="flex items-center justify-between gap-4 border-b border-slate-200/80 bg-white px-4 py-4 sm:px-5 md:px-8">
           <div>
             <p className="text-sm text-slate-500">Your research workspace</p>
-            <h1 className="text-lg font-semibold">Welcome back, {displayName}</h1>
+            <h1 className="max-w-[15rem] truncate text-base font-semibold sm:max-w-none sm:text-lg">
+              Welcome back, {displayName}
+            </h1>
           </div>
 
           <div className="flex items-center gap-3">
             <span className="hidden text-sm text-slate-500 sm:block">
               AI-powered discovery
             </span>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 font-semibold text-indigo-700">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-indigo-100 font-semibold text-indigo-700">
               {displayName.charAt(0).toUpperCase()}
             </div>
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-7xl p-5 md:p-8">
+        <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-5 md:p-8">
           {children}
         </main>
 

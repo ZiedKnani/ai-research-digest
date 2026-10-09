@@ -1,0 +1,808 @@
+﻿{
+    "name":  "AI Research Digest",
+    "nodes":  [
+                  {
+                      "parameters":  {
+
+                                     },
+                      "type":  "n8n-nodes-base.manualTrigger",
+                      "typeVersion":  1,
+                      "position":  [
+                                       -416,
+                                       -336
+                                   ],
+                      "id":  "1df64caa-f101-425a-8502-27d5e69d21e0",
+                      "name":  "When clicking â€˜Execute workflowâ€™"
+                  },
+                  {
+                      "parameters":  {
+                                         "url":  "https://export.arxiv.org/api/query?search_query=cat:cs.AI\u0026start=0\u0026max_results=10\u0026sortBy=submittedDate\u0026sortOrder=descending",
+                                         "sendBody":  true,
+                                         "bodyParameters":  {
+                                                                "parameters":  [
+                                                                                   {
+
+                                                                                   }
+                                                                               ]
+                                                            },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.5,
+                      "position":  [
+                                       608,
+                                       -432
+                                   ],
+                      "id":  "d9e6cba9-e6a5-4376-a8fe-0e1b5647c988",
+                      "name":  "HTTP Request"
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.xml",
+                      "typeVersion":  1,
+                      "position":  [
+                                       992,
+                                       -416
+                                   ],
+                      "id":  "b764cde9-8c48-4cd0-9a61-bbc6413cbc67",
+                      "name":  "XML"
+                  },
+                  {
+                      "parameters":  {
+                                         "fieldToSplitOut":  "feed.entry",
+                                         "include":  "allOtherFields",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.splitOut",
+                      "typeVersion":  1,
+                      "position":  [
+                                       544,
+                                       -160
+                                   ],
+                      "id":  "5ad3ed34-a142-495c-86b4-be8dca7efcd6",
+                      "name":  "Split Out"
+                  },
+                  {
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "bb2ef698-18d5-4d19-b73c-708508c9525e",
+                                                                                     "name":  "=title",
+                                                                                     "value":  "={{$json[\"feed.entry\"].title}}",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "73d889ae-01db-4107-a7d0-0c6057ee8eda",
+                                                                                     "name":  "abstract",
+                                                                                     "value":  "={{$json[\"feed.entry\"].summary}}",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "b00a89fe-e89d-492a-b862-10efc480226f",
+                                                                                     "name":  "published",
+                                                                                     "value":  "={{$json[\"feed.entry\"].published}}",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "a33f078e-b484-451a-8532-b602a99bad61",
+                                                                                     "name":  "arxiv_id",
+                                                                                     "value":  "={{$json[\"feed.entry\"].id}}",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "b160371f-b77a-41d8-abf6-a66ad10b20f8",
+                                                                                     "name":  "authors",
+                                                                                     "value":  "={{ $json[\"feed.entry\"].author.map(a =\u003e a.name) }}",
+                                                                                     "type":  "array"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "8794c3f0-586f-4d6f-88fe-e1b167d84c63",
+                                                                                     "name":  "url",
+                                                                                     "value":  "={{ $json[\"feed.entry\"].link.find(l =\u003e l.rel === \"alternate\").href }}",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.5,
+                      "position":  [
+                                       1056,
+                                       -48
+                                   ],
+                      "id":  "fdc2231e-a58f-4538-bd12-081abddf5085",
+                      "name":  "Edit Fields"
+                  },
+                  {
+                      "parameters":  {
+                                         "assignments":  {
+                                                             "assignments":  [
+                                                                                 {
+                                                                                     "id":  "1910c9b3-d306-4781-a2ed-2bdbb45a7161",
+                                                                                     "name":  "=text_to_analyze",
+                                                                                     "value":  "={{ $json.title + \"\\n\\n\" + $json.abstract }}",
+                                                                                     "type":  "string"
+                                                                                 },
+                                                                                 {
+                                                                                     "id":  "5047217e-7b37-409e-9d39-e2b8d8e80cbb",
+                                                                                     "name":  "",
+                                                                                     "value":  "",
+                                                                                     "type":  "string"
+                                                                                 }
+                                                                             ]
+                                                         },
+                                         "includeOtherFields":  true,
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.5,
+                      "position":  [
+                                       -16,
+                                       288
+                                   ],
+                      "id":  "aeb953b0-3de7-4d67-87a4-3f64245ff816",
+                      "name":  "Prepare Embedding"
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "http://backend:8000/similarity",
+                                         "sendBody":  true,
+                                         "specifyBody":  "json",
+                                         "jsonBody":  "={\n  \"text\": {{ JSON.stringify($json.text) }},\n  \"interests\": {{ JSON.stringify($json.interests) }}\n}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.5,
+                      "position":  [
+                                       624,
+                                       288
+                                   ],
+                      "id":  "d9af3596-d6ee-4df1-ac96-fc1c79ade2ab",
+                      "name":  "HTTP Request1"
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "return items.map(item =\u003e ({\n  json: {\n    text: item.json.text_to_analyze,\n    interests: item.json.interests\n  }\n}));"
+                                     },
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       208,
+                                       288
+                                   ],
+                      "id":  "65754c69-023c-4683-98ea-83d44953dfc5",
+                      "name":  "Code in JavaScript1"
+                  },
+                  {
+                      "parameters":  {
+                                         "mode":  "runOnceForEachItem",
+                                         "jsCode":  "const score = $json.relevance_score;\n\n\nconst threshold = $(\u0027Code in JavaScript2\u0027).item.json.semantic_threshold;\n\nlet relevance_level;\nif (score \u003e= threshold + 10) relevance_level = \"Highly Relevant\";\nelse if (score \u003e= threshold) relevance_level = \"Relevant\";\nelse if (score \u003e= threshold - 10) relevance_level = \"Weakly Relevant\";\nelse relevance_level = \"Not Relevant\";\n\nreturn {\n  json: {\n    title: $(\u0027Edit Fields\u0027).item.json.title,\n    abstract: $(\u0027Edit Fields\u0027).item.json.abstract,\n    published: $(\u0027Edit Fields\u0027).item.json.published,\n    arxiv_id: $(\u0027Edit Fields\u0027).item.json.arxiv_id,\n    authors: $(\u0027Edit Fields\u0027).item.json.authors,\n    url: $(\u0027Edit Fields\u0027).item.json.url,\n             semantic_threshold: $(\u0027Code in JavaScript2\u0027).item.json.semantic_threshold,\n    llm_threshold: $(\u0027Code in JavaScript2\u0027).item.json.llm_threshold,\n    user_id: $(\u0027Code in JavaScript2\u0027).item.json.user_id,\n    user_email: $(\u0027Code in JavaScript2\u0027).item.json.user_email,\n            relevance_score: score,\n\n    relevance_level: relevance_level,\n\n    top_interests: $json.top_interests,\n\n    top_weighted_interests: $json.top_weighted_interests\n  }\n};"
+                                     },
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       848,
+                                       288
+                                   ],
+                      "id":  "71391b78-8cf5-4b37-9fd5-5a60e018e545",
+                      "name":  "Merge Article + Similarity"
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "return items.map(item =\u003e ({\n  json: {\n    title: item.json.title,\n    relevance_score: item.json.relevance_score,\n    top_interest: item.json.top_interests?.[0]?.interest || null\n  }\n}));"
+                                     },
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       192,
+                                       784
+                                   ],
+                      "id":  "b72e3278-6720-4a7c-8e09-0be2f14ad622",
+                      "name":  "Inspect Relevance Scores"
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  false,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "strict",
+                                                                            "version":  3
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "f63e1e75-f0a3-4b15-91ed-237f9eca6cb8",
+                                                                                   "leftValue":  "={{ $json.relevance_score }}",
+                                                                                   "rightValue":  "={{ $json.semantic_threshold }}",
+                                                                                   "operator":  {
+                                                                                                    "type":  "number",
+                                                                                                    "operation":  "gte"
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        },
+                                         "options":  {
+                                                         "ignoreCase":  true
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2.3,
+                      "position":  [
+                                       1072,
+                                       288
+                                   ],
+                      "id":  "2f367c1a-8d1a-44c0-981a-6cc57f7e1dbe",
+                      "name":  "If"
+                  },
+                  {
+                      "parameters":  {
+                                         "mode":  "raw",
+                                         "jsonOutput":  "={{\n  JSON.stringify({\n    title: $json.title,\n    abstract: $json.abstract,\n    semantic_score: $json.relevance_score,\n    detected_interest: $json.top_interests?.[0]?.interest || null,\n    user_profile: [\n      \"Large Language Models (LLMs)\",\n      \"Retrieval Augmented Generation (RAG)\",\n      \"AI Agents / Agentic AI\",\n      \"Generative AI\",\n      \"Machine Learning\",\n      \"Deep Learning\",\n      \"Natural Language Processing\",\n      \"Computer Vision\",\n      \"AI Automation\",\n      \"Intelligent Document Processing\",\n      \"OCR\",\n      \"LangChain / LangGraph\",\n      \"Model Context Protocol (MCP)\"\n    ]\n  })\n}}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.set",
+                      "typeVersion":  3.5,
+                      "position":  [
+                                       1296,
+                                       288
+                                   ],
+                      "id":  "41261af1-c958-4e67-916a-fc3a0da0865b",
+                      "name":  "Prepare LLM Analysis"
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "http://ollama:11434/api/chat",
+                                         "sendBody":  true,
+                                         "specifyBody":  "json",
+                                         "jsonBody":  "=\n{\n  \"model\": \"qwen3:4b\",\n  \"stream\": false,\n  \"format\": \"json\",\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"Evaluate the research paper against the user\u0027s interests. Return JSON only with is_relevant, relevance_score, primary_topic, reason and summary. Ignore superficial keyword overlap.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": {{ JSON.stringify({\n  title: $json.title,\n  abstract: $json.abstract,\n  semantic_score: $json.semantic_score,\n  detected_interest: $json.detected_interest,\n  user_profile: $json.user_profile\n}) .toJsonString() }}\n    }\n  ],\n  \"options\": {\n    \"temperature\": 0.1\n  }\n}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.5,
+                      "position":  [
+                                       1520,
+                                       288
+                                   ],
+                      "id":  "f1bd9bf7-8602-4d9b-bf2e-a4e2e956856a",
+                      "name":  "HTTP Request2"
+                  },
+                  {
+                      "parameters":  {
+                                         "mode":  "runOnceForEachItem",
+                                         "jsCode":  "\nconst response = $json.message?.content;\n\nif (!response) {\n  throw new Error(\"Ollama response is missing message.content\");\n}\n\nlet analysis;\n\ntry {\n  analysis = JSON.parse(response);\n} catch (error) {\n  throw new Error(\"Ollama did not return valid JSON: \" + error.message);\n}\n\nreturn {\n  json: {\n    is_relevant: Boolean(analysis.is_relevant),\n    relevance_score: Number(analysis.relevance_score ?? 0),\n    primary_topic: analysis.primary_topic ?? \"Unknown\",\n    reason: analysis.reason ?? \"\",\n    summary: analysis.summary ?? \"\"\n  }\n};"
+                                     },
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       640,
+                                       512
+                                   ],
+                      "id":  "8a39fda0-90f4-4a57-bb63-8544a83634c5",
+                      "name":  "Parse LLM Response1"
+                  },
+                  {
+                      "parameters":  {
+                                         "mode":  "runOnceForEachItem",
+                                         "jsCode":  "const analysis = $json;\n\n// MÃ©tadonnÃ©es originales provenant d\u0027arXiv\nconst paper = $(\"Edit Fields\").item.json;\n\n// DonnÃ©es du candidat avant l\u0027analyse Ollama\nconst candidate = $(\"Prepare LLM Analysis\").item.json;\n\n// Contexte utilisateur\nconst userCtx = $(\"Code in JavaScript2\").item.json;\n\nreturn {\n  json: {\n    // Informations de l\u0027article\n    title: paper.title,\n    abstract: paper.abstract,\n    arxiv_id: paper.arxiv_id,\n    url: paper.url,\n    published: paper.published,\n    authors: paper.authors || [],\n\n    // Score de similaritÃ© sÃ©mantique\n    semantic_score: candidate.semantic_score,\n    detected_interest: candidate.detected_interest,\n\n    // Analyse du LLM\n    is_relevant: analysis.is_relevant,\n    llm_relevance_score: analysis.relevance_score,\n    primary_topic: analysis.primary_topic,\n    reason: analysis.reason,\n    summary: analysis.summary,\n\n    // Contexte utilisateur propagÃ©\n    user_id: userCtx.user_id,\n    user_email: userCtx.user_email,\n    semantic_threshold: userCtx.semantic_threshold,\n    llm_threshold: userCtx.llm_threshold,\n    digest_frequency: userCtx.digest_frequency\n  }\n};"
+                                     },
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       864,
+                                       512
+                                   ],
+                      "id":  "f2e18357-c845-417a-8e85-64c9179ac230",
+                      "name":  "Merge Paper + LLM Analysis"
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  false,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "loose",
+                                                                            "version":  3
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "3d848cff-337a-44fe-a8da-be762ae828cb",
+                                                                                   "leftValue":  "={{ $json.is_relevant }}",
+                                                                                   "rightValue":  "",
+                                                                                   "operator":  {
+                                                                                                    "type":  "boolean",
+                                                                                                    "operation":  "true",
+                                                                                                    "singleValue":  true
+                                                                                                }
+                                                                               },
+                                                                               {
+                                                                                   "id":  "c5e64062-4636-4905-addc-4d676df2e5f8",
+                                                                                   "leftValue":  "={{ $json.llm_relevance_score}} ",
+                                                                                   "rightValue":  "={{ $json.llm_threshold }}",
+                                                                                   "operator":  {
+                                                                                                    "type":  "number",
+                                                                                                    "operation":  "gte"
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        },
+                                         "looseTypeValidation":  true,
+                                         "options":  {
+                                                         "ignoreCase":  true
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2.3,
+                      "position":  [
+                                       1088,
+                                       512
+                                   ],
+                      "id":  "f3bd9788-4e7f-45ed-bfc7-9727a3d495ed",
+                      "name":  "If1"
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "\nconst papers = $input.all().map(item =\u003e item.json);\n\nfunction escapeHtml(value) {\n  return String(value ?? \"\")\n    .replace(/\u0026/g, \"\u0026amp;\")\n    .replace(/\u003c/g, \"\u0026lt;\")\n    .replace(/\u003e/g, \"\u0026gt;\")\n    .replace(/\"/g, \"\u0026quot;\")\n    .replace(/\u0027/g, \"\u0026#39;\");\n}\n\nfunction formatDate(value) {\n  if (!value) return \"Date inconnue\";\n\n  const date = new Date(value);\n\n  if (Number.isNaN(date.getTime())) {\n    return escapeHtml(value);\n  }\n\n  return date.toLocaleDateString(\"en-GB\", {\n    day: \"2-digit\",\n    month: \"short\",\n    year: \"numeric\",\n    timeZone: \"UTC\"\n  });\n}\n\nconst today = new Date().toISOString().slice(0, 10);\n\nconst articlesHtml = papers.map((paper, index) =\u003e {\n  const title = escapeHtml(paper.title || \"Untitled paper\");\n  const url = /^https:\\/\\/arxiv\\.org\\/abs\\/[\\w.\\/-]+$/.test(\n    paper.url || \"\"\n  ) ? paper.url : \"\";\n\n  const linkHtml = url\n    ? `\u003ca href=\"${escapeHtml(url)}\" style=\"color:#2563eb;text-decoration:none;\"\u003eRead paper on arXiv â†’\u003c/a\u003e`\n    : `\u003cspan style=\"color:#64748b;\"\u003earXiv link unavailable\u003c/span\u003e`;\n\n  const authors = Array.isArray(paper.authors)\n    ? paper.authors.join(\", \")\n    : (paper.authors || \"Unknown\");\n\n  return `\n    \u003cdiv style=\"padding:22px 0;border-bottom:1px solid #e2e8f0;\"\u003e\n      \u003cdiv style=\"font-size:12px;color:#64748b;margin-bottom:8px;\"\u003e\n        #${index + 1} \u0026nbsp;|\u0026nbsp; Published: ${formatDate(paper.published)}\n        \u0026nbsp;|\u0026nbsp; AI relevance: ${escapeHtml(paper.llm_relevance_score)}/100\n      \u003c/div\u003e\n\n      \u003ch2 style=\"font-size:18px;line-height:1.4;margin:0 0 8px;color:#0f172a;\"\u003e\n        ${title}\n      \u003c/h2\u003e\n\n      \u003cp style=\"font-size:13px;color:#64748b;margin:0 0 12px;\"\u003e\n        ${escapeHtml(authors)}\n      \u003c/p\u003e\n\n      \u003cp style=\"font-size:14px;color:#334155;line-height:1.7;\"\u003e\n        ${escapeHtml(paper.summary || \"No summary available.\")}\n      \u003c/p\u003e\n\n      \u003cp style=\"font-size:13px;color:#475569;\"\u003e\n        \u003cstrong\u003eTopic:\u003c/strong\u003e ${escapeHtml(paper.primary_topic || \"Not specified\")}\n      \u003c/p\u003e\n\n      \u003cp style=\"font-size:13px;color:#475569;\"\u003e\n        \u003cstrong\u003eWhy it matters:\u003c/strong\u003e ${escapeHtml(paper.reason || \"No explanation available.\")}\n      \u003c/p\u003e\n\n      \u003cp style=\"margin:16px 0 0;\"\u003e${linkHtml}\u003c/p\u003e\n    \u003c/div\u003e\n  `;\n}).join(\"\");\n\nconst emptyMessage = `\n  \u003cp style=\"color:#475569;line-height:1.6;\"\u003e\n    No papers passed the relevance filters today. Try again in the next run.\n  \u003c/p\u003e\n`;\n\nconst html = `\n\u003c!DOCTYPE html\u003e\n\u003chtml lang=\"en\"\u003e\n\u003chead\u003e\n  \u003cmeta charset=\"UTF-8\"\u003e\n  \u003cmeta name=\"viewport\" content=\"width=device-width,initial-scale=1\"\u003e\n  \u003ctitle\u003eAI Research Digest\u003c/title\u003e\n\u003c/head\u003e\n\u003cbody style=\"margin:0;padding:0;background:#f1f5f9;font-family:Arial,Helvetica,sans-serif;\"\u003e\n  \u003cdiv style=\"max-width:720px;margin:0 auto;padding:24px 16px;\"\u003e\n    \u003cdiv style=\"background:#0f172a;color:#ffffff;padding:28px;border-radius:12px 12px 0 0;\"\u003e\n      \u003cdiv style=\"font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#93c5fd;\"\u003e\n        Personal Research Intelligence\n      \u003c/div\u003e\n      \u003ch1 style=\"margin:12px 0;font-size:28px;\"\u003eAI Research Digest\u003c/h1\u003e\n      \u003cp style=\"margin:0;color:#cbd5e1;font-size:14px;\"\u003e\n        Your curated AI research update Â· ${today}\n      \u003c/p\u003e\n    \u003c/div\u003e\n\n    \u003cdiv style=\"background:#ffffff;padding:24px;border-radius:0 0 12px 12px;\"\u003e\n      \u003cp style=\"font-size:14px;color:#475569;line-height:1.6;\"\u003e\n        We reviewed recent arXiv papers using semantic retrieval and a local\n        AI model. Here are the papers that passed your relevance filters.\n      \u003c/p\u003e\n\n      \u003cp style=\"font-size:14px;color:#0f172a;\"\u003e\n        \u003cstrong\u003e${papers.length}\u003c/strong\u003e paper(s) selected\n      \u003c/p\u003e\n\n      ${papers.length ? articlesHtml : emptyMessage}\n\n      \u003cp style=\"font-size:12px;color:#94a3b8;line-height:1.6;margin-top:24px;\"\u003e\n        Generated automatically by your AI Research Digest workflow.\n        AI-generated summaries and relevance scores may contain errors;\n        consult the original paper before relying on its findings.\n      \u003c/p\u003e\n    \u003c/div\u003e\n  \u003c/div\u003e\n\u003c/body\u003e\n\u003c/html\u003e\n`;\n\nreturn [{\n  json: {\n    email_subject: `AI Research Digest â€” ${today} (${papers.length} papers)`,\n    email_html: html,\n    paper_count: papers.length\n  }\n}];"
+                                     },
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1296,
+                                       816
+                                   ],
+                      "id":  "b2b46e04-3a6b-4c53-8145-09c081566c0a",
+                      "name":  "Build HTML Email"
+                  },
+                  {
+                      "parameters":  {
+                                         "fromEmail":  "researchdigest@example.com",
+                                         "toEmail":  "={{ $(\u0027Code in JavaScript2\u0027).item.json.user_email }}",
+                                         "subject":  "={{ $json.email_subject }}",
+                                         "html":  "={{ $json.email_html }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.emailSend",
+                      "typeVersion":  2.1,
+                      "position":  [
+                                       1616,
+                                       848
+                                   ],
+                      "id":  "4ec03af2-f56f-4c1e-96de-d0d34e060462",
+                      "name":  "Build HTML Email1",
+                      "webhookId":  "4079ef54-afee-47b7-ad29-76b25a0ad521"
+                  },
+                  {
+                      "parameters":  {
+                                         "operation":  "executeQuery",
+                                         "query":  "SELECT \n  us.user_id,\n  us.semantic_threshold,\n  us.llm_threshold,\n  us.digest_frequency,\n  us.digest_time,\n  us.timezone,\n  au.email AS user_email\nFROM user_settings us\nJOIN auth.users au ON au.id = us.user_id\nWHERE us.email_digest_enabled = true\n  -- L\u0027heure locale de l\u0027utilisateur a atteint ou dÃ©passÃ© son heure programmÃ©e\n  AND (now() AT TIME ZONE us.timezone)::time \u003e= us.digest_time\n  -- Cas daily : pas envoyÃ© depuis 20 heures\n  AND (\n    (us.digest_frequency = \u0027daily\u0027\n     AND (us.last_digest_sent_at IS NULL\n          OR us.last_digest_sent_at \u003c now() - interval \u002720 hours\u0027))\n    OR\n    -- Cas weekly : pas envoyÃ© depuis 6 jours\n    (us.digest_frequency = \u0027weekly\u0027\n     AND (us.last_digest_sent_at IS NULL\n          OR us.last_digest_sent_at \u003c now() - interval \u00276 days\u0027))\n    OR\n    -- Cas manual : jamais dÃ©clenchÃ© automatiquement\n    (us.digest_frequency = \u0027manual\u0027 AND false)\n  );",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.postgres",
+                      "typeVersion":  2.7,
+                      "position":  [
+                                       -480,
+                                       0
+                                   ],
+                      "id":  "f03318cb-ed7b-4c88-8e6c-13ea1a86fc9a",
+                      "name":  "Execute a SQL query"
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.splitInBatches",
+                      "typeVersion":  3,
+                      "position":  [
+                                       16,
+                                       -144
+                                   ],
+                      "id":  "2caf47e7-ba17-4c33-b3fd-480a92b1f440",
+                      "name":  "Loop Over Users"
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "const interests = $input.all().map(item =\u003e ({\n  name: item.json.name,\n  weight: Number(item.json.weight)\n}));\n\nconst user = $(\u0027Loop Over Users\u0027).item.json;\n\nreturn [{\n  json: {\n    interests,\n    user_id: user.user_id,\n    user_email: user.user_email,\n    semantic_threshold: Number(user.semantic_threshold),\n    llm_threshold: Number(user.llm_threshold),\n    digest_frequency: user.digest_frequency\n  }\n}];"
+                                     },
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       192,
+                                       -384
+                                   ],
+                      "id":  "9ad6cfe0-133c-4b3c-8909-93acc95a730a",
+                      "name":  "Code in JavaScript2"
+                  },
+                  {
+                      "parameters":  {
+                                         "operation":  "executeQuery",
+                                         "query":  "SELECT name, weight\nFROM user_interests\nWHERE user_id = \u0027{{ $(\u0027Loop Over Users\u0027).item.json.user_id }}\u0027\n  AND enabled = true\nORDER BY weight DESC;",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.postgres",
+                      "typeVersion":  2.7,
+                      "position":  [
+                                       -32,
+                                       -384
+                                   ],
+                      "id":  "b0209bf6-e07a-41fb-8cf5-b3c6e797a02f",
+                      "name":  "Fetch User Interests"
+                  },
+                  {
+                      "parameters":  {
+                                         "jsCode":  "// RÃ©cupÃ©rer le contexte utilisateur depuis Code in JavaScript2\nconst userCtx = $(\u0027Code in JavaScript2\u0027).first().json;\n\n// RÃ©cupÃ©rer les articles depuis Edit Fields\nconst papers = $(\u0027Edit Fields\u0027).all().map(item =\u003e item.json);\n\n// Fusionner : chaque article reÃ§oit les infos utilisateur\nreturn papers.map(paper =\u003e ({\n  json: {\n    ...paper,\n    interests: userCtx.interests,\n    user_id: userCtx.user_id,\n    user_email: userCtx.user_email,\n    semantic_threshold: userCtx.semantic_threshold,\n    llm_threshold: userCtx.llm_threshold,\n    digest_frequency: userCtx.digest_frequency\n  }\n}));"
+                                     },
+                      "type":  "n8n-nodes-base.code",
+                      "typeVersion":  2,
+                      "position":  [
+                                       1424,
+                                       -32
+                                   ],
+                      "id":  "4160e3e4-0341-4368-a080-7b062c0950ab",
+                      "name":  "Merge Papers \u0026 Interests"
+                  },
+                  {
+                      "parameters":  {
+                                         "operation":  "executeQuery",
+                                         "query":  "INSERT INTO papers (\n  user_id,\n  arxiv_id,\n  title,\n  abstract,\n  authors,\n  url,\n  published_at,\n  semantic_score,\n  llm_relevance_score,\n  primary_topic,\n  reason,\n  summary\n)\nVALUES (\n  \u0027{{ $json.user_id }}\u0027,\n  \u0027{{ $json.arxiv_id }}\u0027,\n  \u0027{{ $json.title.replace(/\u0027/g, \"\u0027\u0027\") }}\u0027,\n  \u0027{{ $json.abstract.replace(/\u0027/g, \"\u0027\u0027\") }}\u0027,\n  ARRAY[{{ $json.authors.map(a =\u003e `\u0027${a.replace(/\u0027/g, \"\u0027\u0027\")}\u0027`).join(\u0027,\u0027) }}]::text[],\n  \u0027{{ $json.url }}\u0027,\n  \u0027{{ $json.published }}\u0027::timestamptz,\n  {{ $json.semantic_score }},\n  {{ $json.llm_relevance_score }},\n  \u0027{{ $json.primary_topic.replace(/\u0027/g, \"\u0027\u0027\") }}\u0027,\n  \u0027{{ $json.reason.replace(/\u0027/g, \"\u0027\u0027\") }}\u0027,\n  \u0027{{ $json.summary.replace(/\u0027/g, \"\u0027\u0027\") }}\u0027\n)\nON CONFLICT (user_id, arxiv_id) DO NOTHING;",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.postgres",
+                      "typeVersion":  2.7,
+                      "position":  [
+                                       1648,
+                                       512
+                                   ],
+                      "id":  "ddcffef8-2d05-4c70-8281-c710e77eca3c",
+                      "name":  "Save Paper to Supabase",
+                      "alwaysOutputData":  false
+                  },
+                  {
+                      "parameters":  {
+                                         "operation":  "executeQuery",
+                                         "query":  "UPDATE user_settings\nSET last_digest_sent_at = now(),\n    updated_at = now()\nWHERE user_id = \u0027{{ $(\u0027Code in JavaScript2\u0027).item.json.user_id }}\u0027;",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.postgres",
+                      "typeVersion":  2.7,
+                      "position":  [
+                                       1808,
+                                       512
+                                   ],
+                      "id":  "6da3bea2-9138-472c-9e65-f921ed920820",
+                      "name":  "Update Last Digest Sent"
+                  }
+              ],
+    "pinData":  {
+
+                },
+    "connections":  {
+                        "When clicking â€˜Execute workflowâ€™":  {
+                                                                     "main":  [
+                                                                                  [
+                                                                                      {
+                                                                                          "node":  "Execute a SQL query",
+                                                                                          "type":  "main",
+                                                                                          "index":  0
+                                                                                      }
+                                                                                  ]
+                                                                              ]
+                                                                 },
+                        "HTTP Request":  {
+                                             "main":  [
+                                                          [
+                                                              {
+                                                                  "node":  "XML",
+                                                                  "type":  "main",
+                                                                  "index":  0
+                                                              }
+                                                          ]
+                                                      ]
+                                         },
+                        "XML":  {
+                                    "main":  [
+                                                 [
+                                                     {
+                                                         "node":  "Split Out",
+                                                         "type":  "main",
+                                                         "index":  0
+                                                     }
+                                                 ]
+                                             ]
+                                },
+                        "Split Out":  {
+                                          "main":  [
+                                                       [
+                                                           {
+                                                               "node":  "Edit Fields",
+                                                               "type":  "main",
+                                                               "index":  0
+                                                           }
+                                                       ]
+                                                   ]
+                                      },
+                        "Edit Fields":  {
+                                            "main":  [
+                                                         [
+                                                             {
+                                                                 "node":  "Merge Papers \u0026 Interests",
+                                                                 "type":  "main",
+                                                                 "index":  0
+                                                             }
+                                                         ]
+                                                     ]
+                                        },
+                        "Prepare Embedding":  {
+                                                  "main":  [
+                                                               [
+                                                                   {
+                                                                       "node":  "Code in JavaScript1",
+                                                                       "type":  "main",
+                                                                       "index":  0
+                                                                   }
+                                                               ]
+                                                           ]
+                                              },
+                        "Code in JavaScript1":  {
+                                                    "main":  [
+                                                                 [
+                                                                     {
+                                                                         "node":  "HTTP Request1",
+                                                                         "type":  "main",
+                                                                         "index":  0
+                                                                     }
+                                                                 ]
+                                                             ]
+                                                },
+                        "HTTP Request1":  {
+                                              "main":  [
+                                                           [
+                                                               {
+                                                                   "node":  "Merge Article + Similarity",
+                                                                   "type":  "main",
+                                                                   "index":  0
+                                                               }
+                                                           ]
+                                                       ]
+                                          },
+                        "Merge Article + Similarity":  {
+                                                           "main":  [
+                                                                        [
+                                                                            {
+                                                                                "node":  "If",
+                                                                                "type":  "main",
+                                                                                "index":  0
+                                                                            }
+                                                                        ]
+                                                                    ]
+                                                       },
+                        "If":  {
+                                   "main":  [
+                                                [
+                                                    {
+                                                        "node":  "Prepare LLM Analysis",
+                                                        "type":  "main",
+                                                        "index":  0
+                                                    }
+                                                ]
+                                            ]
+                               },
+                        "Prepare LLM Analysis":  {
+                                                     "main":  [
+                                                                  [
+                                                                      {
+                                                                          "node":  "HTTP Request2",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ]
+                                                              ]
+                                                 },
+                        "HTTP Request2":  {
+                                              "main":  [
+                                                           [
+                                                               {
+                                                                   "node":  "Parse LLM Response1",
+                                                                   "type":  "main",
+                                                                   "index":  0
+                                                               }
+                                                           ]
+                                                       ]
+                                          },
+                        "Inspect Relevance Scores":  {
+                                                         "main":  [
+                                                                      [
+
+                                                                      ]
+                                                                  ]
+                                                     },
+                        "Parse LLM Response1":  {
+                                                    "main":  [
+                                                                 [
+                                                                     {
+                                                                         "node":  "Merge Paper + LLM Analysis",
+                                                                         "type":  "main",
+                                                                         "index":  0
+                                                                     }
+                                                                 ]
+                                                             ]
+                                                },
+                        "Merge Paper + LLM Analysis":  {
+                                                           "main":  [
+                                                                        [
+                                                                            {
+                                                                                "node":  "If1",
+                                                                                "type":  "main",
+                                                                                "index":  0
+                                                                            }
+                                                                        ]
+                                                                    ]
+                                                       },
+                        "If1":  {
+                                    "main":  [
+                                                 [
+                                                     {
+                                                         "node":  "Save Paper to Supabase",
+                                                         "type":  "main",
+                                                         "index":  0
+                                                     },
+                                                     {
+                                                         "node":  "Build HTML Email",
+                                                         "type":  "main",
+                                                         "index":  0
+                                                     }
+                                                 ]
+                                             ]
+                                },
+                        "Build HTML Email":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "Build HTML Email1",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             },
+                        "Build HTML Email1":  {
+                                                  "main":  [
+                                                               [
+                                                                   {
+                                                                       "node":  "Update Last Digest Sent",
+                                                                       "type":  "main",
+                                                                       "index":  0
+                                                                   }
+                                                               ]
+                                                           ]
+                                              },
+                        "Execute a SQL query":  {
+                                                    "main":  [
+                                                                 [
+                                                                     {
+                                                                         "node":  "Loop Over Users",
+                                                                         "type":  "main",
+                                                                         "index":  0
+                                                                     }
+                                                                 ]
+                                                             ]
+                                                },
+                        "Loop Over Users":  {
+                                                "main":  [
+                                                             [
+
+                                                             ],
+                                                             [
+                                                                 {
+                                                                     "node":  "Fetch User Interests",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "Code in JavaScript2":  {
+                                                    "main":  [
+                                                                 [
+                                                                     {
+                                                                         "node":  "HTTP Request",
+                                                                         "type":  "main",
+                                                                         "index":  0
+                                                                     }
+                                                                 ]
+                                                             ]
+                                                },
+                        "Fetch User Interests":  {
+                                                     "main":  [
+                                                                  [
+                                                                      {
+                                                                          "node":  "Code in JavaScript2",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ]
+                                                              ]
+                                                 },
+                        "Merge Papers \u0026 Interests":  {
+                                                              "main":  [
+                                                                           [
+                                                                               {
+                                                                                   "node":  "Prepare Embedding",
+                                                                                   "type":  "main",
+                                                                                   "index":  0
+                                                                               }
+                                                                           ]
+                                                                       ]
+                                                          },
+                        "Save Paper to Supabase":  {
+                                                       "main":  [
+                                                                    [
+
+                                                                    ]
+                                                                ]
+                                                   },
+                        "Update Last Digest Sent":  {
+                                                        "main":  [
+                                                                     [
+                                                                         {
+                                                                             "node":  "Inspect Relevance Scores",
+                                                                             "type":  "main",
+                                                                             "index":  0
+                                                                         }
+                                                                     ]
+                                                                 ]
+                                                    }
+                    },
+    "active":  false,
+    "settings":  {
+                     "executionOrder":  "v1",
+                     "binaryMode":  "separate",
+                     "availableInMCP":  true
+                 },
+    "versionId":  "c937f9e8-f7be-49a6-95cd-26427c9b4cf6",
+    "meta":  {
+                 "templateCredsSetupCompleted":  true,
+                 "instanceId":  "84af6590bcd003e4d80d45f5c832480a1814dd9d1d3988cf7df5f7fdc303e830"
+             },
+    "nodeGroups":  [
+
+                   ],
+    "id":  "3bqtYYV74T5ZqEtw",
+    "tags":  [
+
+             ]
+}

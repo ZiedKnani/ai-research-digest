@@ -87,13 +87,13 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Welcome */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-700 via-indigo-600 to-violet-600 p-7 text-white shadow-lg md:p-10">
+      <section className="relative overflow-hidden rounded-3xl bg-[linear-gradient(135deg,#1d347d_0%,#3156d9_58%,#39749e_100%)] p-6 text-white shadow-xl shadow-indigo-950/10 sm:p-8 md:p-10">
         <div className="relative z-10 max-w-2xl">
           <p className="mb-3 text-sm font-medium text-indigo-100">
             YOUR PERSONAL RESEARCH SPACE
           </p>
 
-          <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
+          <h2 className="max-w-xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl">
             Discover what matters.
           </h2>
 
@@ -102,17 +102,17 @@ export default async function DashboardPage() {
             research that moves your interests forward.
           </p>
 
-          <div className="mt-7 flex flex-wrap gap-3">
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
               href="/dashboard/papers"
-              className="rounded-xl bg-white px-5 py-3 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50"
+              className="inline-flex min-h-11 items-center justify-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50"
             >
               Explore my papers →
             </Link>
 
             <Link
               href="/dashboard/interests"
-              className="rounded-xl border border-white/30 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+              className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/30 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
             >
               Manage interests
             </Link>

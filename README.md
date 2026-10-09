@@ -93,9 +93,38 @@ Open the application:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000/docs
 - Backend healthcheck: http://localhost:8000/health
+- n8n: http://localhost:5678 (or the value of `N8N_PORT_HOST`)
+- Ollama API: http://localhost:11434
 
 Inside the Docker network, the backend hostname is `backend` and its URL is
 `http://backend:8000`.
+
+## n8n workflow and Ollama
+
+The exported workflow is versioned at
+[n8n/workflows/research-digest.json](n8n/workflows/research-digest.json). It
+collects arXiv papers, calls the semantic backend, evaluates candidates with
+Ollama/Qwen, saves relevant papers to Supabase and sends digest emails.
+
+The first Compose build downloads the model configured by `OLLAMA_MODEL` (by
+default `qwen3:4b`) into the persistent `ollama_data` volume. The model is not
+stored in Git. Ollama can require several gigabytes of disk space and RAM.
+
+### Import the workflow in n8n
+
+1. Open http://localhost:5678.
+2. Create the Postgres credential pointing to the Supabase database.
+3. Create the SMTP credential used to send digest emails.
+4. Import `n8n/workflows/research-digest.json` from the n8n menu.
+5. Open the imported workflow and select the two credentials on the Postgres
+	and email nodes.
+6. Execute it manually once to verify the connections.
+
+The workflow already uses Docker service names: `http://backend:8000` and
+`http://ollama:11434`. Do not replace them with `localhost` inside n8n.
+
+The exported workflow does not contain Supabase passwords, SMTP passwords or
+n8n encryption keys. Each developer must configure local credentials in n8n.
 
 ### Useful Docker commands
 

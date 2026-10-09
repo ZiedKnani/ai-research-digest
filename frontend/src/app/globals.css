@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f4f7fb;
+  --foreground: #172033;
+  --ink-muted: #647089;
+  --line: #e3e9f2;
+  --brand: #3156d9;
+  --brand-deep: #1f358f;
+  --surface: #ffffff;
 }
 
 @theme inline {
@@ -12,15 +17,55 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 * {
   box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    linear-gradient(180deg, #f8faff 0%, var(--background) 42rem),
+    var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #cbd8ff;
+  color: #172554;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+  touch-action: manipulation;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgb(49 86 217 / 24%);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  body {
+    background: var(--background);
+  }
 }
 
 input[type="range"].importance-slider {
@@ -60,14 +105,6 @@ input[type="range"].importance-slider::-moz-range-track {
   border-radius: 9999px;
   background: transparent;
 }
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-
 
 /* Importance slider */
 .importance-slider {

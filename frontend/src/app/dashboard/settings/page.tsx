@@ -242,7 +242,7 @@ export default function SettingsPage() {
       )}
 
       <form onSubmit={saveSettings} className="space-y-6">
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-8">
           <div className="mb-6">
             <h3 className="text-lg font-bold text-slate-900">
               Email delivery

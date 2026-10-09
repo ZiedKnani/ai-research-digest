@@ -236,7 +236,7 @@ export default function InterestsPage() {
         </div>
       )}
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6 md:p-8">
         <h3 className="text-lg font-bold text-slate-900">
           Add a new interest
         </h3>
@@ -372,14 +372,14 @@ export default function InterestsPage() {
                   <button
                     type="button"
                     onClick={() => void toggleInterest(interest)}
-                    className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                    className="min-h-10 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
                   >
                     {interest.enabled ? "Pause" : "Activate"}
                   </button>
                   <button
                     type="button"
                     onClick={() => void deleteInterest(interest)}
-                    className="rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+                    className="min-h-10 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
                   >
                     Delete
                   </button>

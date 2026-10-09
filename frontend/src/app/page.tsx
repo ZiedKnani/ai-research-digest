@@ -63,12 +63,11 @@ setMessage(
   }
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#080b14] px-4 py-12 text-white">
-      <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-blue-600/20 blur-[100px]" />
-      <div className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-violet-600/20 blur-[100px]" />
+    <main className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#080b14] px-4 py-8 text-white sm:py-12">
+      <div className="pointer-events-none absolute inset-0 opacity-40 [background-image:linear-gradient(rgb(255_255_255_/_0.035)_1px,transparent_1px),linear-gradient(90deg,rgb(255_255_255_/_0.035)_1px,transparent_1px)] [background-size:44px_44px]" />
 
-      <div className="relative grid w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-[#0d1220]/95 shadow-2xl md:grid-cols-2">
-        <section className="hidden flex-col justify-between border-r border-white/10 p-12 md:flex">
+      <div className="relative grid w-full max-w-5xl overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#0d1220]/95 shadow-2xl shadow-black/30 md:grid-cols-2">
+        <section className="hidden flex-col justify-between border-r border-white/10 bg-[linear-gradient(145deg,rgb(29_49_112_/_0.5),transparent_65%)] p-12 md:flex lg:p-14">
           <div>
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500 text-xl font-bold">
@@ -79,11 +78,11 @@ setMessage(
               </span>
             </div>
 
-            <p className="mt-20 text-sm font-semibold uppercase tracking-[0.25em] text-blue-400">
+            <p className="mt-20 text-xs font-semibold uppercase tracking-[0.25em] text-blue-400">
               Personal Research Intelligence
             </p>
 
-            <h1 className="mt-5 text-4xl font-bold leading-tight">
+            <h1 className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight lg:text-5xl">
               Less noise.
               <br />
               More discovery.
@@ -103,8 +102,8 @@ setMessage(
           </div>
         </section>
 
-        <section className="p-7 sm:p-10 md:p-12">
-          <div className="mb-10 flex items-center gap-3 md:hidden">
+        <section className="p-6 sm:p-10 md:p-12 lg:p-14">
+          <div className="mb-9 flex items-center gap-3 md:hidden">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-lg font-bold">
               R
             </div>
@@ -118,7 +117,7 @@ setMessage(
               {isSignUp ? "Get started for free" : "Welcome back"}
             </p>
 
-            <h2 className="mt-2 text-3xl font-bold">
+            <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
               {isSignUp ? "Create your account" : "Sign in"}
             </h2>
 
@@ -145,7 +144,7 @@ setMessage(
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="you@example.com"
-                className="w-full rounded-xl border border-white/10 bg-[#080b14] px-4 py-3.5 text-white outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                className="min-h-12 w-full rounded-xl border border-white/10 bg-[#080b14] px-4 py-3.5 text-white outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
 
@@ -165,7 +164,7 @@ setMessage(
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="At least 6 characters"
-                className="w-full rounded-xl border border-white/10 bg-[#080b14] px-4 py-3.5 text-white outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                className="min-h-12 w-full rounded-xl border border-white/10 bg-[#080b14] px-4 py-3.5 text-white outline-none transition placeholder:text-slate-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
               {isSignUp && (
                 <p className="mt-2 text-xs text-slate-500">
@@ -195,7 +194,7 @@ setMessage(
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-blue-600 px-4 py-3.5 font-semibold transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+              className="min-h-12 w-full rounded-xl bg-blue-600 px-4 py-3.5 font-semibold shadow-lg shadow-blue-950/30 transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading
                 ? "Please wait..."
