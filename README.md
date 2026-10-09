@@ -31,6 +31,10 @@ This repository contains both the user-facing application and the backend servic
 		<td><img src="docs/screenshots/interests.png" alt="ResearchDigest interests" /></td>
 		<td><img src="docs/screenshots/settings.png" alt="ResearchDigest digest settings" /></td>
 	</tr>
+	<tr>
+		<td><img src="docs/screenshots/email-digest.png" alt="ResearchDigest email digest" /></td>
+		<td><img src="docs/screenshots/n8n-workflow.png" alt="ResearchDigest n8n workflow" /></td>
+	</tr>
 </table>
 
 ## Getting started with Docker
