@@ -1,5 +1,6 @@
 services:
   backend:
+    image: zied2711/ai-research-digest-backend:latest
     build:
       context: ./backend
     ports:
@@ -72,6 +73,7 @@ services:
         condition: service_completed_successfully
 
   frontend:
+    image: zied2711/ai-research-digest-frontend:latest
     build:
       context: ./frontend
       args:

@@ -130,6 +130,36 @@ The workflow already uses Docker service names: `http://backend:8000` and
 The exported workflow does not contain Supabase passwords, SMTP passwords or
 n8n encryption keys. Each developer must configure local credentials in n8n.
 
+## Docker Hub distribution
+
+The project images are prepared for the Docker Hub namespace `zied2711`:
+
+- `zied2711/ai-research-digest-frontend:latest`
+- `zied2711/ai-research-digest-backend:latest`
+
+Build and publish them from a machine authenticated to Docker Hub:
+
+```powershell
+docker login
+docker compose build
+docker push zied2711/ai-research-digest-frontend:latest
+docker push zied2711/ai-research-digest-backend:latest
+```
+
+On another workstation, the images can be pulled without rebuilding the
+application code:
+
+```powershell
+docker compose pull frontend backend
+docker compose up -d --no-build --wait
+```
+
+Ollama is intentionally not republished under this account. Compose pulls the
+official `ollama/ollama` image and downloads `qwen3:4b` into the persistent
+`ollama_data` volume. The n8n workflow remains versioned in GitHub and is
+imported into the official n8n container because its database and credentials
+are local to each developer.
+
 ### Useful Docker commands
 
 ```powershell
