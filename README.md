@@ -1,6 +1,8 @@
 # AI Research Digest
 
-A full-stack monorepo for the AI Research Digest project.
+A full-stack monorepo for the AI Research Digest project. The application is
+composed of a Next.js frontend and a FastAPI semantic backend, orchestrated with
+Docker Compose.
 
 ## Overview
 
@@ -18,31 +20,122 @@ This repository contains both the user-facing application and the backend servic
 - Backend: Python service
 - Repository layout: monorepo with separate application folders
 
-## Getting started
+## Application preview
 
-### 1. Frontend
+<table>
+	<tr>
+		<td><img src="docs/screenshots/dashboard.png" alt="ResearchDigest dashboard" /></td>
+		<td><img src="docs/screenshots/papers.png" alt="ResearchDigest papers library" /></td>
+	</tr>
+	<tr>
+		<td><img src="docs/screenshots/interests.png" alt="ResearchDigest interests" /></td>
+		<td><img src="docs/screenshots/settings.png" alt="ResearchDigest digest settings" /></td>
+	</tr>
+</table>
 
-```bash
+## Getting started with Docker
+
+### Prerequisites
+
+Install the following on the new workstation:
+
+- Git
+- Docker Desktop with Docker Compose enabled
+- Access to the Supabase project used by the application
+
+Docker Desktop must be running before starting the project.
+
+### 1. Clone the repository
+
+```powershell
+git clone <repository-url>
+cd ai-research-digest
+```
+
+### 2. Configure Supabase
+
+Copy the example environment file:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Open `.env` and replace the example values with the project's real Supabase
+values. They can be found in Supabase under **Project Settings > API**:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
+```
+
+The real `.env` file must never be committed or shared publicly. Only
+`.env.example` belongs in Git.
+
+### 3. Build and start the application
+
+```powershell
+docker compose up -d --build
+```
+
+The first build downloads the `all-MiniLM-L6-v2` model into the backend image.
+It requires an Internet connection and can take several minutes. Later starts
+reuse the built image and do not download the model again.
+
+### 4. Verify the services
+
+```powershell
+docker compose ps
+Invoke-WebRequest http://localhost:8000/health
+```
+
+Open the application:
+
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:8000/docs
+- Backend healthcheck: http://localhost:8000/health
+
+Inside the Docker network, the backend hostname is `backend` and its URL is
+`http://backend:8000`.
+
+### Useful Docker commands
+
+```powershell
+# Follow application logs
+docker compose logs -f
+
+# Rebuild only the frontend after a frontend change
+docker compose up -d --build --force-recreate frontend
+
+# Stop the application
+docker compose down
+
+# Stop and rebuild everything from scratch
+docker compose down
+docker compose build --no-cache
+docker compose up -d
+```
+
+## Local development without Docker
+
+Docker Compose is the recommended way to get the complete application running.
+For frontend-only work, create `frontend/.env.local` with the same Supabase
+variables, then run:
+
+```powershell
 cd frontend
 npm install
 npm run dev
 ```
 
-Then open the app in your browser at:
+For backend-only work:
 
-- http://localhost:3000
-
-### 2. Backend
-
-```bash
+```powershell
 cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-python app.py
+uvicorn app:app --reload --host 0.0.0.0 --port 8000
 ```
-
-> Adapt the backend startup command if your service uses a different entry point.
 
 ## Development notes
 
