@@ -1,188 +1,264 @@
 # AI Research Digest
 
-A full-stack monorepo for the AI Research Digest project. The application is
-composed of a Next.js frontend and a FastAPI semantic backend, orchestrated with
-Docker Compose.
+A full-stack, AI-powered research digest platform that discovers scientific papers, evaluates their relevance to your interests, generates summaries locally, and delivers personalized email digests.
 
-## Overview
+The project combines a **Next.js frontend**, a **FastAPI semantic search service**, **Supabase**, **n8n**, and **Ollama** in a Docker Compose environment.
 
-This repository contains both the user-facing application and the backend service used to process research-related data.
+## Features
+
+* **Personalized research discovery** — collect recent papers from arXiv and match them against user-defined interests.
+* **Semantic relevance scoring** — use `sentence-transformers/all-MiniLM-L6-v2` to identify potentially relevant papers.
+* **AI-powered evaluation and summaries** — use Ollama with `qwen3:4b` to evaluate candidates and generate summaries locally.
+* **Research library** — save and manage relevant papers through the web application.
+* **Automated email digests** — use n8n to orchestrate collection, processing, storage, and email delivery.
+* **User authentication and settings** — use Supabase Auth and PostgreSQL to manage accounts, interests, and digest preferences.
+* **Containerized deployment** — run the application and supporting services with Docker Compose.
+
+## Architecture and technology stack
+
+| Component                   | Technology                             | Responsibility                             |
+| --------------------------- | -------------------------------------- | ------------------------------------------ |
+| Frontend                    | Next.js, TypeScript, Tailwind CSS      | User interface and application             |
+| Semantic backend            | FastAPI, Python, Sentence Transformers | Semantic similarity and relevance scoring  |
+| Database and authentication | Supabase, PostgreSQL                   | Users, interests, settings, and papers     |
+| Workflow automation         | n8n                                    | Research pipeline and scheduled digests    |
+| Local language model        | Ollama, Qwen3 4B                       | AI evaluation and paper summarization      |
+| Infrastructure              | Docker, Docker Compose                 | Containerization and service orchestration |
+| Research source             | arXiv                                  | Scientific paper discovery                 |
 
 ## Project structure
 
-- [frontend](frontend) — Next.js application for the web UI
-- [backend](backend) — backend service for the semantic/research logic
-- [.gitignore](.gitignore) — Git exclusions for the project
-
-## Stack
-
-- Frontend: Next.js, TypeScript, Tailwind CSS
-- Backend: Python service
-- Repository layout: monorepo with separate application folders
+```text
+ai-research-digest/
+├── frontend/                   # Next.js application
+├── backend/                    # FastAPI semantic service
+├── n8n/
+│   └── workflows/
+│       └── research-digest.json
+├── docs/
+│   ├── screenshots/
+│   └── setup.md
+├── docker-compose.yml
+├── .env.example
+├── .gitignore
+└── README.md
+```
 
 ## Application preview
 
 <table>
-	<tr>
-		<td><img src="docs/screenshots/dashboard.png" alt="ResearchDigest dashboard" /></td>
-		<td><img src="docs/screenshots/papers.png" alt="ResearchDigest papers library" /></td>
-	</tr>
-	<tr>
-		<td><img src="docs/screenshots/interests.png" alt="ResearchDigest interests" /></td>
-		<td><img src="docs/screenshots/settings.png" alt="ResearchDigest digest settings" /></td>
-	</tr>
-	<tr>
-		<td><img src="docs/screenshots/email-digest.png" alt="ResearchDigest email digest" /></td>
-		<td><img src="docs/screenshots/n8n-workflow.png" alt="ResearchDigest n8n workflow" /></td>
-	</tr>
+  <tr>
+    <td><img src="docs/screenshots/dashboard.png" alt="ResearchDigest dashboard" /></td>
+    <td><img src="docs/screenshots/papers.png" alt="ResearchDigest papers library" /></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/interests.png" alt="ResearchDigest interests" /></td>
+    <td><img src="docs/screenshots/settings.png" alt="ResearchDigest digest settings" /></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/email-digest.png" alt="ResearchDigest email digest" /></td>
+    <td><img src="docs/screenshots/n8n-workflow.png" alt="ResearchDigest n8n workflow" /></td>
+  </tr>
 </table>
 
 ## Getting started with Docker
 
 ### Prerequisites
 
-Install the following on the new workstation:
+Install the following:
 
-- Git
-- Docker Desktop with Docker Compose enabled
-- Access to the Supabase project used by the application
+* Git
+* Docker Desktop with Docker Compose
+* Access to the Supabase project used by the application
+* An Internet connection for downloading images and the Ollama model
 
-Docker Desktop must be running before starting the project.
+Ensure Docker Desktop is running before proceeding.
 
 ### 1. Clone the repository
 
 ```powershell
-git clone <repository-url>
+git clone https://github.com/ZiedKnani/ai-research-digest.git
 cd ai-research-digest
 ```
 
-### 2. Configure Supabase
+### 2. Configure environment variables
 
-Copy the example environment file:
+Create your local environment file:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Open `.env` and replace the example values with the project's real Supabase
-values. They can be found in Supabase under **Project Settings > API**:
+Open `.env` and configure the required values. At minimum, the frontend needs the Supabase project URL and publishable key:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
 ```
 
-The real `.env` file must never be committed or shared publicly. Only
-`.env.example` belongs in Git.
+Keep any other required settings from `.env.example`, including configurable service ports or the Ollama model.
 
-### 3. Build and start the application
+You can find your Supabase API values under **Supabase → Project Settings → API**.
+
+**Security:** Never commit your real `.env` file, database passwords, SMTP credentials, or Supabase secret keys. Only placeholder values belong in `.env.example`. Never expose privileged server-side keys to the frontend.
+
+### 3. Start the application
+
+There are two ways to run the project.
+
+**Option A — Use the published application images**
+
+This is the recommended option for developers who want to run the application without building the frontend and backend locally.
+
+```powershell
+docker compose pull frontend backend
+docker compose up -d --wait
+```
+
+**Option B — Build the application locally**
+
+Use this option when developing or modifying the frontend or backend.
 
 ```powershell
 docker compose up -d --build
 ```
 
-The first build downloads the `all-MiniLM-L6-v2` model into the backend image.
-It requires an Internet connection and can take several minutes. Later starts
-reuse the built image and do not download the model again.
+The initial setup may take several minutes. Docker needs to download the required images, the semantic backend may need to download its embedding model during the image build, and the Ollama setup needs to obtain the configured language model. The Ollama model is stored in a persistent Docker volume rather than in Git.
 
 ### 4. Verify the services
 
+Check the container status:
+
 ```powershell
 docker compose ps
+```
+
+Check the backend health endpoint:
+
+```powershell
 Invoke-WebRequest http://localhost:8000/health
 ```
 
-Open the application:
+Open the local services:
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000/docs
-- Backend healthcheck: http://localhost:8000/health
-- n8n: http://localhost:5678 (or the value of `N8N_PORT_HOST`)
-- Ollama API: http://localhost:11434
+| Service               | URL                          |
+| --------------------- | ---------------------------- |
+| Frontend              | http://localhost:3000        |
+| FastAPI documentation | http://localhost:8000/docs   |
+| Backend health check  | http://localhost:8000/health |
+| n8n                   | http://localhost:5678        |
+| Ollama API            | http://localhost:11434       |
 
-Inside the Docker network, the backend hostname is `backend` and its URL is
-`http://backend:8000`.
+The n8n host port may differ if `N8N_PORT_HOST` is configured in `.env`.
 
-## n8n workflow and Ollama
+Within the Docker network, n8n should use the service URLs `http://backend:8000` and `http://ollama:11434`, rather than `localhost`.
 
-The exported workflow is versioned at
-[n8n/workflows/research-digest.json](n8n/workflows/research-digest.json). It
-collects arXiv papers, calls the semantic backend, evaluates candidates with
-Ollama/Qwen, saves relevant papers to Supabase and sends digest emails.
+## Configure n8n
 
-The first Compose build downloads the model configured by `OLLAMA_MODEL` (by
-default `qwen3:4b`) into the persistent `ollama_data` volume. The model is not
-stored in Git. Ollama can require several gigabytes of disk space and RAM.
+The exported workflow is available at [`n8n/workflows/research-digest.json`](n8n/workflows/research-digest.json).
 
-### Import the workflow in n8n
+It orchestrates the research pipeline:
 
-1. Open http://localhost:5678.
-2. Create the Postgres credential pointing to the Supabase database.
-3. Create the SMTP credential used to send digest emails.
-4. Import `n8n/workflows/research-digest.json` from the n8n menu.
-5. Open the imported workflow and select the two credentials on the Postgres
-	and email nodes.
-6. Execute it manually once to verify the connections.
+1. Retrieve research papers from arXiv.
+2. Calculate semantic relevance using the FastAPI backend.
+3. Evaluate and summarize relevant candidates with Ollama.
+4. Save eligible papers and their metadata to Supabase.
+5. Generate and send personalized email digests according to user settings.
 
-The workflow already uses Docker service names: `http://backend:8000` and
-`http://ollama:11434`. Do not replace them with `localhost` inside n8n.
+### Initial configuration
 
-The exported workflow does not contain Supabase passwords, SMTP passwords or
-n8n encryption keys. Each developer must configure local credentials in n8n.
+After starting the containers:
 
-## Docker Hub distribution
+1. Open the n8n interface.
+2. Configure the required PostgreSQL credential for the Supabase database.
+3. Configure the SMTP credential for sending email.
+4. Import `n8n/workflows/research-digest.json`.
+5. Assign the credentials to the corresponding nodes.
+6. Execute the workflow manually to test the connections before enabling scheduled execution.
 
-The project images are prepared for the Docker Hub namespace `zied2711`:
+The workflow export contains the workflow configuration, not your personal credentials. Each developer must configure their own database and email credentials.
 
-- `zied2711/ai-research-digest-frontend:latest`
-- `zied2711/ai-research-digest-backend:latest`
+The workflow uses Docker service names for internal communication. Do not replace `http://backend:8000` or `http://ollama:11434` with `localhost` inside n8n.
 
-Build and publish them from a machine authenticated to Docker Hub:
+For additional setup details, see [`docs/setup.md`](docs/setup.md).
+
+## Docker Hub images
+
+The frontend and backend images are published under the `zied2711` Docker Hub namespace:
+
+* [`zied2711/ai-research-digest-frontend`](https://hub.docker.com/r/zied2711/ai-research-digest-frontend)
+* [`zied2711/ai-research-digest-backend`](https://hub.docker.com/r/zied2711/ai-research-digest-backend)
+
+To publish updated images, authenticate to Docker Hub and build the services:
 
 ```powershell
 docker login
-docker compose build
-docker push zied2711/ai-research-digest-frontend:latest
-docker push zied2711/ai-research-digest-backend:latest
+docker compose build frontend backend
+docker compose push frontend backend
 ```
 
-On another workstation, the images can be pulled without rebuilding the
-application code:
+Ensure the Compose configuration contains the correct image names and tags before publishing.
+
+On another workstation, developers can pull the published frontend and backend images without rebuilding their application code:
 
 ```powershell
 docker compose pull frontend backend
-docker compose up -d --no-build --wait
+docker compose up -d --wait
 ```
 
-Ollama is intentionally not republished under this account. Compose pulls the
-official `ollama/ollama` image and downloads `qwen3:4b` into the persistent
-`ollama_data` volume. The n8n workflow remains versioned in GitHub and is
-imported into the official n8n container because its database and credentials
-are local to each developer.
+Ollama and n8n use their configured container images. The language model is downloaded separately into persistent storage. The n8n workflow is versioned in Git, while credentials and local n8n state remain specific to each environment.
 
-### Useful Docker commands
+## Useful Docker commands
+
+View running services:
 
 ```powershell
-# Follow application logs
+docker compose ps
+```
+
+Follow application logs:
+
+```powershell
 docker compose logs -f
+```
 
-# Rebuild only the frontend after a frontend change
+View logs for a specific service:
+
+```powershell
+docker compose logs -f frontend
+docker compose logs -f backend
+docker compose logs -f n8n
+docker compose logs -f ollama
+```
+
+Rebuild the frontend after a code change:
+
+```powershell
 docker compose up -d --build --force-recreate frontend
+```
 
-# Stop the application
-docker compose down
+Stop the services:
 
-# Stop and rebuild everything from scratch
+```powershell
 docker compose down
-docker compose build --no-cache
+```
+
+Rebuild application images without using the build cache:
+
+```powershell
+docker compose build --no-cache frontend backend
 docker compose up -d
 ```
 
+The normal `docker compose down` command preserves named volumes. Do not remove persistent volumes unless you intentionally want to delete their stored data.
+
 ## Local development without Docker
 
-Docker Compose is the recommended way to get the complete application running.
-For frontend-only work, create `frontend/.env.local` with the same Supabase
-variables, then run:
+Docker Compose is the recommended way to run the complete environment. Individual components can also be developed separately.
+
+### Frontend
+
+Create `frontend/.env.local` with the required Supabase environment variables, then run:
 
 ```powershell
 cd frontend
@@ -190,7 +266,7 @@ npm install
 npm run dev
 ```
 
-For backend-only work:
+### Backend
 
 ```powershell
 cd backend
@@ -200,22 +276,28 @@ pip install -r requirements.txt
 uvicorn app:app --reload --host 0.0.0.0 --port 8000
 ```
 
-## Development notes
+## Development and security notes
 
-- The frontend and backend are separated into dedicated folders for easier maintenance.
-- The monorepo structure keeps the project easier to run, review, and deploy together.
-- Environment variables should remain local and not be committed to Git.
-
-## Repository goals
-
-- deliver a personalized research digest experience
-- keep the frontend and backend decoupled but coordinated
-- make the project easy to clone, run, and extend
+* Keep frontend and backend responsibilities separated.
+* Store configuration and credentials in local environment files or the relevant credential manager.
+* Keep privileged Supabase keys on the server side only.
+* Configure database access policies and validate user ownership when reading or writing user-specific data.
+* Keep large AI models and generated data outside version control.
+* Test the n8n workflow with the required credentials before enabling automated email delivery.
 
 ## Contributing
 
-1. Create a branch
-2. Make your changes
-3. Commit with a clear message
-4. Push to the repository
-5. Open a pull request
+Contributions and improvements are welcome.
+
+1. Create a feature branch.
+2. Make and test your changes.
+3. Commit with a clear message.
+4. Push your branch.
+5. Open a pull request.
+
+## Project goals
+
+* Make scientific research easier to discover and follow.
+* Deliver personalized digests based on individual interests.
+* Use local AI inference to reduce dependence on paid model APIs.
+* Provide a reproducible, containerized environment that developers can extend.
